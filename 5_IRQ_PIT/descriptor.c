@@ -8,6 +8,8 @@ gdt_ptr_t	gdt_ptr;
 idt_entry_t idt_entries[256];
 idt_ptr_t	idt_ptr;
 
+isr_t	handler_route[256];
+
 static void gdt_set_gate(gdt_entry_t *gdt,u32int base,u32int limit,u8int access,u8int gran)
 {
 	gdt->limit_low = (limit&0xFFFF);
@@ -68,77 +70,47 @@ static void idt_flush()
 			::"a"(&idt_ptr):);
 }
 
+void register_int_handler(u8int n,isr_t handler)
+{
+					handler_route[n] = handler;
+}
+
 void isr_handler(register_t reg)
 {
-        printf("Wow,interrupt comes!\n");
-        printf("ds:%x\n",reg.ds);
-        printf("edi:%x,esi:%x,ebp:%x,esp:%x,ebx:%x,edx:%x,ecx:%x,eax:%x\n",
-        		reg.edi,reg.esi,reg.ebp,reg.esp,reg.ebx,reg.edx,reg.ecx,reg.eax);
-        printf("int_no:%d,err_code:%d\n",reg.int_no,reg.err_code);
-        /*printf("eip:%x,cs:%x,eflags:%x,useresp:%x,ss:%x\n",
-        		reg.eip,reg.cs,reg.eflags,reg.useresp,reg.ss);*/
-        printf("eip:%x,cs:%x,eflags:%x\n",
-                		reg.eip,reg.cs,reg.eflags);
+					//route
+					if(handler_route[reg.int_no]!=0){
+									isr_t handler = handler_route[reg.int_no];
+									handler(reg);
+					}
+					//default dealing
+					else {
+									printf("--Not handled interrupt--\n");
+									printf("ds:%x\n",reg.ds);
+									printf("edi:%x,esi:%x,ebp:%x,esp:%x,ebx:%x,edx:%x,ecx:%x,eax:%x\n",
+											reg.edi,reg.esi,reg.ebp,reg.esp,reg.ebx,reg.edx,reg.ecx,reg.eax);
+									printf("int_no:%d,err_code:%d\n",reg.int_no,reg.err_code);
+									printf("eip:%x,cs:%x,eflags:%x\n",
+												reg.eip,reg.cs,reg.eflags);
+					}
+					//send EOI
+					if(reg.int_no>=32&&reg.int_no<48){
+									if(reg.int_no>=40){
+													outb(0xA0,0x20);//send slave 8259 EOI
+									}
+									outb(0x20,0x20);//send master 8259 EOI
+					}
 }
-void irq_handler(){
-	
-}
-
-void isr0();
-void isr1();
-void isr2();
-void isr3();
-void isr4();
-void isr5();
-void isr6();
-void isr7();
-void isr8();
-void isr9();
-void isr10();
-void isr11();
-void isr12();
-void isr13();
-void isr14();
-void isr15();
-void isr16();
-void isr17();
-void isr18();
-void isr19();
-void isr20();
-void isr21();
-void isr22();
-void isr23();
-void isr24();
-void isr25();
-void isr26();
-void isr27();
-void isr28();
-void isr29();
-void isr30();
-void isr31();
-void irq0();
-void irq1();
-void irq2();
-void irq3();
-void irq4();
-void irq5();
-void irq6();
-void irq7();
-void irq8();
-void irq9();
-void irq10();
-void irq11();
-void irq12();
-void irq13();
-void irq14();
-void irq15();
-
 
 void init_idt()
 {
         int i;
         idt_ptr.limit = sizeof(idt_entries) - 1;
         idt_ptr.base = (u32int)&idt_entries;
+        
+        //initial handler router
+        for(i=0;i<256;i++){
+        							handler_route[i] = 0;
+        			 }
         idt_set_gate(&idt_entries[0],(u32int)isr0,0x08,0x8E);
         idt_set_gate(&idt_entries[1],(u32int)isr1,0x08,0x8E);
         idt_set_gate(&idt_entries[2],(u32int)isr2,0x08,0x8E);
@@ -188,22 +160,22 @@ void init_idt()
         outb(0xA1,0x01);
         			 
         
-        idt_set_gate(&idt_entries[32],(u32int)irq0,0x08,0x8E);
-        idt_set_gate(&idt_entries[33],(u32int)irq1,0x08,0x8E);
-        idt_set_gate(&idt_entries[34],(u32int)irq2,0x08,0x8E);
-        idt_set_gate(&idt_entries[35],(u32int)irq3,0x08,0x8E);
-        idt_set_gate(&idt_entries[36],(u32int)irq4,0x08,0x8E);
-        idt_set_gate(&idt_entries[37],(u32int)irq5,0x08,0x8E);
-        idt_set_gate(&idt_entries[38],(u32int)irq6,0x08,0x8E);
-        idt_set_gate(&idt_entries[39],(u32int)irq7,0x08,0x8E);
-        idt_set_gate(&idt_entries[40],(u32int)irq8,0x08,0x8E);
-        idt_set_gate(&idt_entries[41],(u32int)irq9,0x08,0x8E);
-        idt_set_gate(&idt_entries[42],(u32int)irq10,0x08,0x8E);
-        idt_set_gate(&idt_entries[43],(u32int)irq11,0x08,0x8E);
-        idt_set_gate(&idt_entries[44],(u32int)irq12,0x08,0x8E);
-        idt_set_gate(&idt_entries[45],(u32int)irq13,0x08,0x8E);
-        idt_set_gate(&idt_entries[46],(u32int)irq14,0x08,0x8E);
-        idt_set_gate(&idt_entries[47],(u32int)irq15,0x08,0x8E);
+					idt_set_gate(&idt_entries[32],(u32int)isr32,0x08,0x8E);
+					idt_set_gate(&idt_entries[33],(u32int)isr33,0x08,0x8E);
+					idt_set_gate(&idt_entries[34],(u32int)isr34,0x08,0x8E);
+					idt_set_gate(&idt_entries[35],(u32int)isr35,0x08,0x8E);
+					idt_set_gate(&idt_entries[36],(u32int)isr36,0x08,0x8E);
+					idt_set_gate(&idt_entries[37],(u32int)isr37,0x08,0x8E);
+					idt_set_gate(&idt_entries[38],(u32int)isr38,0x08,0x8E);
+					idt_set_gate(&idt_entries[39],(u32int)isr39,0x08,0x8E);
+					idt_set_gate(&idt_entries[40],(u32int)isr40,0x08,0x8E);
+					idt_set_gate(&idt_entries[41],(u32int)isr41,0x08,0x8E);
+					idt_set_gate(&idt_entries[42],(u32int)isr42,0x08,0x8E);
+					idt_set_gate(&idt_entries[43],(u32int)isr43,0x08,0x8E);
+					idt_set_gate(&idt_entries[44],(u32int)isr44,0x08,0x8E);
+					idt_set_gate(&idt_entries[45],(u32int)isr45,0x08,0x8E);
+					idt_set_gate(&idt_entries[46],(u32int)isr46,0x08,0x8E);
+					idt_set_gate(&idt_entries[47],(u32int)isr47,0x08,0x8E);
         
         idt_flush();
 }

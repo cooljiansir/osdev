@@ -16,16 +16,9 @@ isr\arg1:
         jmp isr_common_stub
 .endm
 
-.macro IRQ arg1,arg2
-.global irq\arg1
-irq\arg1:
-		cli
-		push $0
-		push \arg2
-		jmp irq_common_stub
-.endm
 
 .section .text
+/************0-31 System preseved****************/
         ISR_NOERRCODE 0
         ISR_NOERRCODE 1
         ISR_NOERRCODE 2
@@ -58,7 +51,25 @@ irq\arg1:
         ISR_NOERRCODE 29
         ISR_NOERRCODE 30
         ISR_NOERRCODE 31
-
+        
+/************32-47 Outside interrupt****************/
+		  ISR_NOERRCODE 32
+		  ISR_NOERRCODE 33
+		  ISR_NOERRCODE 34
+		  ISR_NOERRCODE 35
+		  ISR_NOERRCODE 36
+		  ISR_NOERRCODE 37
+		  ISR_NOERRCODE 38
+		  ISR_NOERRCODE 39
+		  ISR_NOERRCODE 40
+		  ISR_NOERRCODE 41
+		  ISR_NOERRCODE 42
+		  ISR_NOERRCODE 43
+		  ISR_NOERRCODE 44
+		  ISR_NOERRCODE 45
+		  ISR_NOERRCODE 46
+		  ISR_NOERRCODE 47
+		  
 
 isr_common_stub:
         pusha
@@ -87,47 +98,3 @@ isr_common_stub:
 
         sti
         iret
-		/*remap irq table*/
-		IRQ 0,32
-		IRQ 1,33
-		IRQ 2,34
-		IRQ 3,35
-		IRQ 4,36
-		IRQ 5,37
-		IRQ 6,38
-		IRQ 7,39
-		IRQ 8,40
-		IRQ 9,41
-		IRQ 10,42
-		IRQ 11,43
-		IRQ 12,44
-		IRQ 13,45
-		IRQ 14,46
-		IRQ 15,47
-irq_common_stub:
-		pusha
-		
-		xor %eax,%eax
-		movw %ds,%ax
-		pushl %eax
-		
-		//set kernel segments 
-		movw $0x10,%ax
-		movw %ax,%ds
-		movw %ax,%es
-		movw %ax,%fs
-		movw %ax,%gs
-		
-		call irq_handler
-		
-		xor %ebx,%ebx
-		pop %ebx
-		movw %bx,%ds
-		movw %bx,%es
-		movw %bx,%fs
-		movw %bx,%gs
-		
-		popa
-		addl $8,%esp	//clean up error code and isr number pushed by isrx
-		sti
-		iret
