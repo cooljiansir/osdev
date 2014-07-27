@@ -24,6 +24,9 @@ descriptor.o : descriptor.c include/descriptor.h
 descriptorS.o : descriptor.S
 	$(CC) -c $< -o $@
 
-kernel : boot.o main.o monitor.o common.o descriptor.o  descriptorS.o
-	$(LD) -T linker.ld boot.o main.o descriptor.o monitor.o common.o  descriptorS.o -o $@
+timer.o : timer.c include/timer.h
+	$(CC) -c $< $(CFLAGS) -o $@
+
+kernel : boot.o main.o monitor.o common.o descriptor.o  descriptorS.o timer.o
+	$(LD) -T linker.ld boot.o main.o descriptor.o monitor.o common.o  descriptorS.o timer.o -o $@
 
