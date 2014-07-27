@@ -1,5 +1,6 @@
 #include "include/descriptor.h"
 #include "include/common.h"
+#include "include/stack.h"
 
 gdt_entry_t gdt_entries[5];
 gdt_ptr_t	gdt_ptr;
@@ -67,9 +68,20 @@ static void idt_flush()
 			::"a"(&idt_ptr):);
 }
 
-void isr_handler()
+void isr_handler(register_t reg)
 {
         printf("Wow,interrupt comes!\n");
+        printf("ds:%x\n",reg.ds);
+        printf("edi:%x,esi:%x,ebp:%x,esp:%x,ebx:%x,edx:%x,ecx:%x,eax:%x\n",
+        		reg.edi,reg.esi,reg.ebp,reg.esp,reg.ebx,reg.edx,reg.ecx,reg.eax);
+        printf("int_no:%d,err_code:%d\n",reg.int_no,reg.err_code);
+        /*printf("eip:%x,cs:%x,eflags:%x,useresp:%x,ss:%x\n",
+        		reg.eip,reg.cs,reg.eflags,reg.useresp,reg.ss);*/
+        printf("eip:%x,cs:%x,eflags:%x\n",
+                		reg.eip,reg.cs,reg.eflags);
+}
+void irq_handler(){
+	
 }
 
 void isr0();
@@ -104,6 +116,23 @@ void isr28();
 void isr29();
 void isr30();
 void isr31();
+void irq0();
+void irq1();
+void irq2();
+void irq3();
+void irq4();
+void irq5();
+void irq6();
+void irq7();
+void irq8();
+void irq9();
+void irq10();
+void irq11();
+void irq12();
+void irq13();
+void irq14();
+void irq15();
+
 
 void init_idt()
 {
@@ -142,6 +171,40 @@ void init_idt()
         idt_set_gate(&idt_entries[29],(u32int)isr29,0x08,0x8E);
         idt_set_gate(&idt_entries[30],(u32int)isr30,0x08,0x8E);
         idt_set_gate(&idt_entries[31],(u32int)isr31,0x08,0x8E);
-		idt_flush();
+        
+        //set irq
+        //remap the irq table
+        //icw1
+        outb(0x20,0x11);//master port
+        outb(0xA0,0x11);//slave port
+        //icw2
+        outb(0x21,0x20);//master interrupt vector begins at 0x20
+        outb(0xA1,0x28);//slave interrupt vector begins at 0x28
+        //icw3
+        outb(0x21,0x04);//slaves attatched to IR line 2
+        outb(0xA1,0x02);//slave  in IR line 2 of master
+        //icw4
+        outb(0x21,0x01);
+        outb(0xA1,0x01);
+        			 
+        
+        idt_set_gate(&idt_entries[32],(u32int)irq0,0x08,0x8E);
+        idt_set_gate(&idt_entries[33],(u32int)irq1,0x08,0x8E);
+        idt_set_gate(&idt_entries[34],(u32int)irq2,0x08,0x8E);
+        idt_set_gate(&idt_entries[35],(u32int)irq3,0x08,0x8E);
+        idt_set_gate(&idt_entries[36],(u32int)irq4,0x08,0x8E);
+        idt_set_gate(&idt_entries[37],(u32int)irq5,0x08,0x8E);
+        idt_set_gate(&idt_entries[38],(u32int)irq6,0x08,0x8E);
+        idt_set_gate(&idt_entries[39],(u32int)irq7,0x08,0x8E);
+        idt_set_gate(&idt_entries[40],(u32int)irq8,0x08,0x8E);
+        idt_set_gate(&idt_entries[41],(u32int)irq9,0x08,0x8E);
+        idt_set_gate(&idt_entries[42],(u32int)irq10,0x08,0x8E);
+        idt_set_gate(&idt_entries[43],(u32int)irq11,0x08,0x8E);
+        idt_set_gate(&idt_entries[44],(u32int)irq12,0x08,0x8E);
+        idt_set_gate(&idt_entries[45],(u32int)irq13,0x08,0x8E);
+        idt_set_gate(&idt_entries[46],(u32int)irq14,0x08,0x8E);
+        idt_set_gate(&idt_entries[47],(u32int)irq15,0x08,0x8E);
+        
+        idt_flush();
 }
 

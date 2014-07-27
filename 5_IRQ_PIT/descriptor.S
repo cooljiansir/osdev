@@ -16,9 +16,16 @@ isr\arg1:
         jmp isr_common_stub
 .endm
 
-.section .text
-.global isr_common_stub
+.macro IRQ arg1,arg2
+.global irq\arg1
+irq\arg1:
+		cli
+		push $0
+		push \arg2
+		jmp irq_common_stub
+.endm
 
+.section .text
         ISR_NOERRCODE 0
         ISR_NOERRCODE 1
         ISR_NOERRCODE 2
@@ -55,6 +62,7 @@ isr\arg1:
 
 isr_common_stub:
         pusha
+        xor %eax,%eax
         movw %ds,%ax
         pushl %eax
 
@@ -66,6 +74,7 @@ isr_common_stub:
 
         call isr_handler
 
+		  xor %eax,%eax
         popl %eax
         movw %ax,%ds
         movw %ax,%es
@@ -78,3 +87,47 @@ isr_common_stub:
 
         sti
         iret
+		/*remap irq table*/
+		IRQ 0,32
+		IRQ 1,33
+		IRQ 2,34
+		IRQ 3,35
+		IRQ 4,36
+		IRQ 5,37
+		IRQ 6,38
+		IRQ 7,39
+		IRQ 8,40
+		IRQ 9,41
+		IRQ 10,42
+		IRQ 11,43
+		IRQ 12,44
+		IRQ 13,45
+		IRQ 14,46
+		IRQ 15,47
+irq_common_stub:
+		pusha
+		
+		xor %eax,%eax
+		movw %ds,%ax
+		pushl %eax
+		
+		//set kernel segments 
+		movw $0x10,%ax
+		movw %ax,%ds
+		movw %ax,%es
+		movw %ax,%fs
+		movw %ax,%gs
+		
+		call irq_handler
+		
+		xor %ebx,%ebx
+		pop %ebx
+		movw %bx,%ds
+		movw %bx,%es
+		movw %bx,%fs
+		movw %bx,%gs
+		
+		popa
+		addl $8,%esp	//clean up error code and isr number pushed by isrx
+		sti
+		iret

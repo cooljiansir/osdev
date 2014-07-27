@@ -90,19 +90,24 @@ void monitor_clear()
 	cursor_x = cursor_y = 0;
 }
 
-static char *itoa(char *str,int a)
+static char *itoa(char *str,int a,int base)
 {
 	char *strc = str;
-	int len=0,i,j;
+	int len=0,i,j,p;
 	char temp;
 	if(a<0){
 		(*str++) = '-';
 		a*=-1;
 		len++;
 	}
+	if(a==0){
+		(*str++)='0';
+	}
 	while(a){
-		(*str++) = a%10+'0';
-		a/=10;
+		p = a%base;
+		if(p<10)(*str++) = p +'0';
+		else (*str++) = p - 10 +'a';
+		a/=base;
 		len++;
 	}
 	(*str) = '\0';
@@ -114,7 +119,6 @@ static char *itoa(char *str,int a)
 	}
 	return strc;
 }
-
 void printf(const char *str, ...)
 {
 	char **params = (char **)(&str);
@@ -136,8 +140,14 @@ void printf(const char *str, ...)
 				monitor_put('%');
 			else if(ch=='d')
 			{
-				monitor_write(itoa(buff,*((int *)params++)));
+				monitor_write(itoa(buff,*((int *)params++),10));
 			}
+			else if(ch=='x')
+			{
+				monitor_write("0x");
+				monitor_write(itoa(buff,*((int *)params++),16));
+			}
+			
 			else if(ch=='s')
 			{	
 				monitor_write(*params++);

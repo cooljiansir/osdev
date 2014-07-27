@@ -33,7 +33,7 @@
 00000000000i[      ]   SB16 support: no
 00000000000i[      ]   USB support: no
 00000000000i[      ]   VGA extension support: vbe
-00000000000i[MEM0  ] allocated memory at 0x95b96008. after alignment, vector=0x95b97000
+00000000000i[MEM0  ] allocated memory at 0x95bac008. after alignment, vector=0x95bad000
 00000000000i[MEM0  ] 512.00MB
 00000000000i[MEM0  ] mem block size = 0x00100000, blocks=512
 00000000000i[MEM0  ] rom at 0xfffe0000/131072 ('/home/zhijian/tools/bochs-2.6.6/bios/BIOS-bochs-latest')
@@ -43,7 +43,7 @@
 00000000000i[DEV   ] PIIX3 PCI-to-ISA bridge present at device 1, function 0
 00000000000i[PLUGIN] init_dev of 'cmos' plugin device by virtual method
 00000000000i[CMOS  ] Using local time for initial clock
-00000000000i[CMOS  ] Setting initial clock to: Fri Jul 25 13:19:54 2014 (time0=1406265594)
+00000000000i[CMOS  ] Setting initial clock to: Sun Jul 27 13:17:15 2014 (time0=1406438235)
 00000000000i[PLUGIN] init_dev of 'dma' plugin device by virtual method
 00000000000i[DMA   ] channel 4 used by cascade
 00000000000i[PLUGIN] init_dev of 'pic' plugin device by virtual method
@@ -149,6 +149,7 @@
 00000000000i[XGUI  ] Mouse capture off
 00000000000i[      ] set SIGINT handler to bx_debug_ctrlc_handler
 00000000000i[XGUI  ] Mouse capture off
+00000000000i[XGUI  ] Mouse capture off
 00000004661i[BIOS  ] $Revision: 11761 $ $Date: 2013-08-02 17:59:49 +0200 (Fr, 02. Aug 2013) $
 00000318064i[KBD   ] reset-disable command received
 00000320798i[BIOS  ] Starting rombios32
@@ -193,27 +194,31 @@
 00001876596i[BIOS  ] ata0-0: PCHS=200/16/63 translation=none LCHS=200/16/63
 00005753834i[BIOS  ] IDE time out
 00017844204i[BIOS  ] Booting from 0000:7c00
-00177124000e[XGUI  ] xkeypress(): keysym ffeb unhandled!
-01675728000i[      ] Ctrl-C detected in signal handler.
-01675728000i[XGUI  ] Mouse capture off
-01675728000i[      ] dbg: Quit
-01675728000i[CPU0  ] CPU is in protected mode (active)
-01675728000i[CPU0  ] CS.mode = 32 bit
-01675728000i[CPU0  ] SS.mode = 32 bit
-01675728000i[CPU0  ] EFER   = 0x00000000
-01675728000i[CPU0  ] | EAX=0007fe88  EBX=1ffd344c  ECX=1ffd3400  EDX=00000000
-01675728000i[CPU0  ] | ESP=0007fe68  EBP=0007fe60  ESI=00000031  EDI=0007fedc
-01675728000i[CPU0  ] | IOPL=0 ID vip vif ac vm rf nt of df if tf sf ZF af PF cf
-01675728000i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
-01675728000i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
-01675728000i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-01675728000i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-01675728000i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-01675728000i[CPU0  ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-01675728000i[CPU0  ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
-01675728000i[CPU0  ] | EIP=00009129 (00009129)
-01675728000i[CPU0  ] | CR0=0x60000011 CR2=0x00000000
-01675728000i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
-01675728000i[CMOS  ] Last time is 1406266012 (Fri Jul 25 13:26:52 2014)
-01675728000i[XGUI  ] Exit
-01675728000i[SIM   ] quit_sim called with exit code 0
+00138811625i[XGUI  ] Mouse capture off
+00138811625i[XGUI  ] Mouse capture off
+00138811625i[XGUI  ] Mouse capture off
+00138811625i[XGUI  ] Mouse capture off
+00138811626i[XGUI  ] Mouse capture off
+00138811626i[XGUI  ] Mouse capture off
+00138811626i[XGUI  ] Mouse capture off
+00138811626i[      ] dbg: Quit
+00138811626i[CPU0  ] CPU is in protected mode (active)
+00138811626i[CPU0  ] CS.mode = 32 bit
+00138811626i[CPU0  ] SS.mode = 32 bit
+00138811626i[CPU0  ] EFER   = 0x00000000
+00138811626i[CPU0  ] | EAX=fffffffe  EBX=00010000  ECX=000b8000  EDX=00102032
+00138811626i[CPU0  ] | ESP=0007fe98  EBP=0007fef4  ESI=00000000  EDI=00000000
+00138811626i[CPU0  ] | IOPL=0 ID vip vif ac vm rf nt OF df if tf SF zf AF pf cf
+00138811626i[CPU0  ] | SEG sltr(index|ti|rpl)     base    limit G D
+00138811626i[CPU0  ] |  CS:0008( 0001| 0|  0) 00000000 ffffffff 1 1
+00138811626i[CPU0  ] |  DS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00138811626i[CPU0  ] |  SS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00138811626i[CPU0  ] |  ES:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00138811626i[CPU0  ] |  FS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00138811626i[CPU0  ] |  GS:0010( 0002| 0|  0) 00000000 ffffffff 1 1
+00138811626i[CPU0  ] | EIP=00101115 (00101115)
+00138811626i[CPU0  ] | CR0=0x60000011 CR2=0x00000000
+00138811626i[CPU0  ] | CR3=0x00000000 CR4=0x00000000
+00138811626i[CMOS  ] Last time is 1406438269 (Sun Jul 27 13:17:49 2014)
+00138811626i[XGUI  ] Exit
+00138811626i[SIM   ] quit_sim called with exit code 0
