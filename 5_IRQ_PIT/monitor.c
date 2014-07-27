@@ -89,17 +89,11 @@ void monitor_clear()
 	}
 	cursor_x = cursor_y = 0;
 }
-
-static char *itoa(char *str,int a,int base)
+static char *itoa_u(char *str,unsigned int a,int base)
 {
 	char *strc = str;
 	int len=0,i,j,p;
 	char temp;
-	if(a<0){
-		(*str++) = '-';
-		a*=-1;
-		len++;
-	}
 	if(a==0){
 		(*str++)='0';
 	}
@@ -112,6 +106,36 @@ static char *itoa(char *str,int a,int base)
 	}
 	(*str) = '\0';
 	i=0,j=len-1;
+	for(;i<j;i++,j--){
+		temp = strc[i];
+		strc[i] = strc[j];
+		strc[j] = temp;
+	}
+	return strc;
+}
+static char *itoa(char *str,int a,int base)
+{
+	char *strc = str;
+	int len=0,i,j,p;
+	int flag = 0;
+	char temp;
+	if(a<0){
+		(*str++) = '-';
+		a*=-1;
+		flag = 1;
+	}
+	if(a==0){
+		(*str++)='0';
+	}
+	while(a){
+		p = a%base;
+		if(p<10)(*str++) = p +'0';
+		else (*str++) = p - 10 +'a';
+		a/=base;
+		len++;
+	}
+	(*str) = '\0';
+	i=0+flag,j=len-1+flag;
 	for(;i<j;i++,j--){
 		temp = strc[i];
 		strc[i] = strc[j];
@@ -145,9 +169,8 @@ void printf(const char *str, ...)
 			else if(ch=='x')
 			{
 				monitor_write("0x");
-				monitor_write(itoa(buff,*((int *)params++),16));
+				monitor_write(itoa_u(buff,*((unsigned int *)params++),16));
 			}
-			
 			else if(ch=='s')
 			{	
 				monitor_write(*params++);
