@@ -72,33 +72,34 @@ static void idt_flush()
 
 void register_int_handler(u8int n,isr_t handler)
 {
-					handler_route[n] = handler;
+	handler_route[n] = handler;
 }
 
 void isr_handler(register_t reg)
 {
-					//route
-					if(handler_route[reg.int_no]!=0){
-									isr_t handler = handler_route[reg.int_no];
-									handler(reg);
-					}
-					//default dealing
-					else {
-									printf("--Not handled interrupt--\n");
-									printf("ds:%x\n",reg.ds);
-									printf("edi:%x,esi:%x,ebp:%x,esp:%x,ebx:%x,edx:%x,ecx:%x,eax:%x\n",
-											reg.edi,reg.esi,reg.ebp,reg.esp,reg.ebx,reg.edx,reg.ecx,reg.eax);
-									printf("int_no:%d,err_code:%d\n",reg.int_no,reg.err_code);
-									printf("eip:%x,cs:%x,eflags:%x\n",
-												reg.eip,reg.cs,reg.eflags);
-					}
-					//send EOI
-					if(reg.int_no>=32&&reg.int_no<48){
-									if(reg.int_no>=40){
-													outb(0xA0,0x20);//send slave 8259 EOI
-									}
-									outb(0x20,0x20);//send master 8259 EOI
-					}
+	//route
+	if(handler_route[reg.int_no]!=0){
+		isr_t handler = handler_route[reg.int_no];
+		handler(reg);
+	}
+	//default dealing
+	else {
+		printf("--Not handled interrupt--\n");
+		printf("ds:%x\n",reg.ds);
+		printf("edi:%x,esi:%x,ebp:%x,esp:%x,ebx:%x,edx:%x,ecx:%x,eax:%x\n",
+			reg.edi,reg.esi,reg.ebp,reg.esp,reg.ebx,
+			reg.edx,reg.ecx,reg.eax);
+		printf("int_no:%d,err_code:%d\n",reg.int_no,reg.err_code);
+		printf("eip:%x,cs:%x,eflags:%x\n",
+			reg.eip,reg.cs,reg.eflags);
+	}
+	//send EOI
+	if(reg.int_no>=32&&reg.int_no<48){
+		if(reg.int_no>=40){
+			outb(0xA0,0x20);//send slave 8259 EOI
+		}
+		outb(0x20,0x20);//send master 8259 EOI
+	}
 }
 
 void init_idt()
@@ -109,8 +110,8 @@ void init_idt()
         
         //initial handler router
         for(i=0;i<256;i++){
-        							handler_route[i] = 0;
-        			 }
+       		handler_route[i] = 0;
+       	 }
         idt_set_gate(&idt_entries[0],(u32int)isr0,0x08,0x8E);
         idt_set_gate(&idt_entries[1],(u32int)isr1,0x08,0x8E);
         idt_set_gate(&idt_entries[2],(u32int)isr2,0x08,0x8E);
@@ -159,24 +160,24 @@ void init_idt()
         outb(0x21,0x01);
         outb(0xA1,0x01);
         			 
-        
-					idt_set_gate(&idt_entries[32],(u32int)isr32,0x08,0x8E);
-					idt_set_gate(&idt_entries[33],(u32int)isr33,0x08,0x8E);
-					idt_set_gate(&idt_entries[34],(u32int)isr34,0x08,0x8E);
-					idt_set_gate(&idt_entries[35],(u32int)isr35,0x08,0x8E);
-					idt_set_gate(&idt_entries[36],(u32int)isr36,0x08,0x8E);
-					idt_set_gate(&idt_entries[37],(u32int)isr37,0x08,0x8E);
-					idt_set_gate(&idt_entries[38],(u32int)isr38,0x08,0x8E);
-					idt_set_gate(&idt_entries[39],(u32int)isr39,0x08,0x8E);
-					idt_set_gate(&idt_entries[40],(u32int)isr40,0x08,0x8E);
-					idt_set_gate(&idt_entries[41],(u32int)isr41,0x08,0x8E);
-					idt_set_gate(&idt_entries[42],(u32int)isr42,0x08,0x8E);
-					idt_set_gate(&idt_entries[43],(u32int)isr43,0x08,0x8E);
-					idt_set_gate(&idt_entries[44],(u32int)isr44,0x08,0x8E);
-					idt_set_gate(&idt_entries[45],(u32int)isr45,0x08,0x8E);
-					idt_set_gate(&idt_entries[46],(u32int)isr46,0x08,0x8E);
-					idt_set_gate(&idt_entries[47],(u32int)isr47,0x08,0x8E);
-        
+      
+	idt_set_gate(&idt_entries[32],(u32int)isr32,0x08,0x8E);
+	idt_set_gate(&idt_entries[33],(u32int)isr33,0x08,0x8E);
+	idt_set_gate(&idt_entries[34],(u32int)isr34,0x08,0x8E);
+	idt_set_gate(&idt_entries[35],(u32int)isr35,0x08,0x8E);
+	idt_set_gate(&idt_entries[36],(u32int)isr36,0x08,0x8E);
+	idt_set_gate(&idt_entries[37],(u32int)isr37,0x08,0x8E);
+	idt_set_gate(&idt_entries[38],(u32int)isr38,0x08,0x8E);
+	idt_set_gate(&idt_entries[39],(u32int)isr39,0x08,0x8E);
+	idt_set_gate(&idt_entries[40],(u32int)isr40,0x08,0x8E);
+	idt_set_gate(&idt_entries[41],(u32int)isr41,0x08,0x8E);
+	idt_set_gate(&idt_entries[42],(u32int)isr42,0x08,0x8E);
+	idt_set_gate(&idt_entries[43],(u32int)isr43,0x08,0x8E);
+	idt_set_gate(&idt_entries[44],(u32int)isr44,0x08,0x8E);
+	idt_set_gate(&idt_entries[45],(u32int)isr45,0x08,0x8E);
+	idt_set_gate(&idt_entries[46],(u32int)isr46,0x08,0x8E);
+	idt_set_gate(&idt_entries[47],(u32int)isr47,0x08,0x8E);
+
         idt_flush();
 }
 

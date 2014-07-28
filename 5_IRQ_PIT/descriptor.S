@@ -3,7 +3,7 @@
 
 isr\arg1:
         cli
-        push $0				/*pushb=push? pushb will cause compile error*/
+        push $0	
         push $\arg1
         jmp isr_common_stub
 .endm
@@ -53,22 +53,22 @@ isr\arg1:
         ISR_NOERRCODE 31
         
 /************32-47 Outside interrupt****************/
-		  ISR_NOERRCODE 32
-		  ISR_NOERRCODE 33
-		  ISR_NOERRCODE 34
-		  ISR_NOERRCODE 35
-		  ISR_NOERRCODE 36
-		  ISR_NOERRCODE 37
-		  ISR_NOERRCODE 38
-		  ISR_NOERRCODE 39
-		  ISR_NOERRCODE 40
-		  ISR_NOERRCODE 41
-		  ISR_NOERRCODE 42
-		  ISR_NOERRCODE 43
-		  ISR_NOERRCODE 44
-		  ISR_NOERRCODE 45
-		  ISR_NOERRCODE 46
-		  ISR_NOERRCODE 47
+	ISR_NOERRCODE 32
+	ISR_NOERRCODE 33
+	ISR_NOERRCODE 34
+	ISR_NOERRCODE 35
+	ISR_NOERRCODE 36
+	ISR_NOERRCODE 37
+	ISR_NOERRCODE 38
+	ISR_NOERRCODE 39
+	ISR_NOERRCODE 40
+	ISR_NOERRCODE 41
+	ISR_NOERRCODE 42
+	ISR_NOERRCODE 43
+	ISR_NOERRCODE 44
+	ISR_NOERRCODE 45
+	ISR_NOERRCODE 46
+	ISR_NOERRCODE 47
 		  
 
 isr_common_stub:
@@ -85,7 +85,7 @@ isr_common_stub:
 
         call isr_handler
 
-		  xor %eax,%eax
+	xor %eax,%eax
         popl %eax
         movw %ax,%ds
         movw %ax,%es

@@ -4,25 +4,30 @@
 
 void init_timer(u32int frequency)
 {
-				register_int_handler(TIMER_VEC,timer_callback);
-				// The value we send to the PIT is the value to divide it's input clock
-				// (1193180 Hz) by, to get our required frequency. Important to note is
-				// that the divisor must be small enough to fit into 16-bits.
-				u32int divisor = 1193180 / frequency;
-				
-				// Send the command byte.
-				outb(0x43, 0x36);
-				
-				// Divisor has to be sent byte-wise, so split here into upper/lower bytes.
-				u8int l = (u8int)(divisor & 0xFF);
-				u8int h = (u8int)( (divisor>>8) & 0xFF );
-				
-				// Send the frequency divisor.
-				outb(0x40, l);
-				outb(0x40, h);
+	register_int_handler(TIMER_VEC,timer_callback);
+	// The value we send to the PIT is the value to divide it's input clock
+	// (1193180 Hz) by, to get our required frequency. Important to note is
+	// that the divisor must be small enough to fit into 16-bits.
+	u32int divisor = 1193180 / frequency;
+	
+	// Send the command byte.
+	outb(0x43, 0x36);
+	
+	// Divisor has to be sent byte-wise, so split here into upper/lower bytes.
+	u8int l = (u8int)(divisor & 0xFF);
+	u8int h = (u8int)( (divisor>>8) & 0xFF );
+	
+	// Send the frequency divisor.
+	outb(0x40, l);
+	outb(0x40, h);
 }
 int ticks = 0;
+int seconds = 0;
 void timer_callback(register_t reg)
 {
-				printf("timer interrupt! %d\n",ticks++);
+	ticks++;
+	if(ticks==100){
+		ticks = 0;
+		printf("timer interrupt! %ds\n",seconds++);
+	}
 }
